@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Body, INestApplication } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { LogModule } from '../src/log/log.module';
 
 import { CreateUserDto } from '../src/user/dto/create-user.dto';
@@ -35,9 +35,19 @@ const testBooking: BookingDto = {
   endDate: new Date("2034-01-04T01:00") ,
 }
 
+const adminRole : RoleDto = {
+  name : "admin"
+}
+
+const activeStatus : StatusDto = {
+  name: "active"
+}
+
   let responseParking : ParkingPlace;
   let responseBooking : Booking;
   let clientUser : {user: User, token: string};
+  let roleId : number;
+  let statusId : number;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -47,6 +57,10 @@ const testBooking: BookingDto = {
     app = moduleFixture.createNestApplication();
     await app.init();
 
+    const resRole =  await request(app.getHttpServer()).post('/role').send(adminRole);
+    roleId = resRole.body.id;
+    const resStatus =  await request(app.getHttpServer()).post('/status').send(activeStatus);
+    statusId = resStatus.body.id;
     
     await request(app.getHttpServer()).post('/user').send(testUser);
     const responselogin = await request(app.getHttpServer()).post('/auth/login').send({email: testUser.email, password: testUser.password});
@@ -74,6 +88,10 @@ const testBooking: BookingDto = {
     await request(app.getHttpServer()).delete(`/parking/${responseParking.id}`);
     
     await request(app.getHttpServer()).delete(`/user/${clientUser.user.id}`);
+
+    await request(app.getHttpServer()).delete(`/role/${roleId}`);
+   
+    await request(app.getHttpServer()).delete(`/status/${statusId}`);
 })
 });
 
@@ -107,6 +125,20 @@ const testClientUserModified: CreateUserDto = {
   status: new StatusDto("active")
 } 
 
+const adminRole : RoleDto = {
+  name : "admin"
+}
+const clientRole : RoleDto = {
+  name : "client"
+}
+
+const activeStatus : StatusDto = {
+  name: "active"
+}
+
+  let roleAdminId : number;
+  let roleClientId : number;
+  let statusId : number;
   let clientUser : {user: User, token: string};
   let adminUser : {user: User, token: string};
   beforeEach(async () => {
@@ -116,6 +148,14 @@ const testClientUserModified: CreateUserDto = {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+
+    const resAdminRole =  await request(app.getHttpServer()).post('/role').send(adminRole);
+    roleAdminId = resAdminRole.body.id;
+    const resClientRole =  await request(app.getHttpServer()).post('/role').send(clientRole);
+    roleClientId = resClientRole.body.id;
+    const resStatus =  await request(app.getHttpServer()).post('/status').send(activeStatus);
+    statusId = resStatus.body.id;
 
     await request(app.getHttpServer()).post('/user').send(testAdminUser);
     const responseAdminLogin = await request(app.getHttpServer()).post('/auth/login').send({email: testAdminUser.email, password: testAdminUser.password});
@@ -140,6 +180,9 @@ const testClientUserModified: CreateUserDto = {
   afterAll(async()=>{
     await request(app.getHttpServer()).delete(`/user/${adminUser.user.id}`); 
     await request(app.getHttpServer()).delete(`/user/${clientUser.user.id}`);
+    await request(app.getHttpServer()).delete(`/role/${roleAdminId}`);
+    await request(app.getHttpServer()).delete(`/role/${roleClientId}`);
+    await request(app.getHttpServer()).delete(`/status/${statusId}`);
 })
 });
 
@@ -165,6 +208,17 @@ describe('Create booking test (e2e)', () => {
     endDate: new Date("2034-01-04T01:00") ,
   }
 
+  const clientRole : RoleDto = {
+    name : "client"
+  }
+  
+  const activeStatus : StatusDto = {
+    name: "active"
+  }
+
+  let roleId : number;
+  let statusId : number;
+
   let responseParking : ParkingPlace;
   let responseBooking : Booking;
   let clientUser : {user: User, token: string};
@@ -175,6 +229,11 @@ describe('Create booking test (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    const resRole =  await request(app.getHttpServer()).post('/role').send(clientRole);
+    roleId = resRole.body.id;
+    const resStatus =  await request(app.getHttpServer()).post('/status').send(activeStatus);
+    statusId = resStatus.body.id;
 
     await request(app.getHttpServer()).post('/user').send(testUser);
     const responselogin = await request(app.getHttpServer()).post('/auth/login').send({email: testUser.email, password: testUser.password});
@@ -200,22 +259,12 @@ describe('Create booking test (e2e)', () => {
     await request(app.getHttpServer()).delete(`/parking/${responseParking.id}`);
     
     await request(app.getHttpServer()).delete(`/user/${clientUser.user.id}`);
+
+    await request(app.getHttpServer()).delete(`/role/${roleId}`);
+   
+    await request(app.getHttpServer()).delete(`/status/${statusId}`);
 })
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 describe('Occupated Parking places test (e2e)', () => {
@@ -239,6 +288,17 @@ describe('Occupated Parking places test (e2e)', () => {
     endDate: new Date("2034-01-04T01:00") ,
   }
 
+  const adminRole : RoleDto = {
+    name : "admin"
+  }
+  
+  const activeStatus : StatusDto = {
+    name: "active"
+  }
+
+  let roleId : number;
+  let statusId : number;
+
   let responseParking : ParkingPlace;
   let responseBooking : Booking;
   let adminUser : {user: User, token: string};
@@ -249,6 +309,11 @@ describe('Occupated Parking places test (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
     await app.init();
+
+    const resRole =  await request(app.getHttpServer()).post('/role').send(adminRole);
+    roleId = resRole.body.id;
+    const resStatus =  await request(app.getHttpServer()).post('/status').send(activeStatus);
+    statusId = resStatus.body.id;
 
     await request(app.getHttpServer()).post('/user').send(testUser);
     const responselogin = await request(app.getHttpServer()).post('/auth/login').send({email: testUser.email, password: testUser.password});
@@ -277,5 +342,9 @@ describe('Occupated Parking places test (e2e)', () => {
     await request(app.getHttpServer()).delete(`/parking/${responseParking.id}`);
     
     await request(app.getHttpServer()).delete(`/user/${adminUser.user.id}`);
+
+    await request(app.getHttpServer()).delete(`/role/${roleId}`);
+   
+    await request(app.getHttpServer()).delete(`/status/${statusId}`);
 })
 });

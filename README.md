@@ -62,7 +62,7 @@ $ npm run test:e2e
 
 [mongo-express](http://localhost:8081/) A web-based MongoDB admin interface.
 
-[swagger](http://localhost:8080/) Open-source tools built to help programmers develop, design, document, and use REST APIs.
+[swagger](http://localhost:3000/api/) Open-source tools built to help programmers develop, design, document, and use REST APIs.
 
 
 ## License

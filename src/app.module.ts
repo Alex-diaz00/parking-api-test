@@ -6,15 +6,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { User } from './user/entities/user.entity';
-import { Role } from './role/entities/role.entity';
 import { RoleModule } from './role/role.module';
 import { StatusModule } from './status/status.module';
-import { Status } from './status/entities/status.entity';
 import { ParkingModule } from './parking/parking.module';
-import { Booking } from './parking/entities/booking.entity';
-import { ParkingPlace } from './parking/entities/parking.entity';
-import { Vehicle } from './parking/entities/vehicle.entity';
 import { LogModule } from './log/log.module';
 import { MongooseModule } from '@nestjs/mongoose';
 
@@ -35,9 +29,9 @@ import { MongooseModule } from '@nestjs/mongoose';
         type: 'postgres',
         host: config.get('DATABASE_HOST'),
         port: parseInt(config.get('DATABASE_PORT')),
-        username: config.get('DATABASE_USERNAME'),
-        password: config.get('DATABASE_PASSWORD'),
-        database: config.get('DATABASE_NAME'),
+        username: config.get('POSTGRES_USER'),
+        password: config.get('POSTGRES_PASSWORD'),
+        database: config.get('POSTGRES_DB'),
         autoLoadEntities: true,
         synchronize: true,
       })
